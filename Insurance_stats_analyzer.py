@@ -4,8 +4,8 @@ import xlrd
 import re
 import numpy as np
 from openpyxl import Workbook
-from openpyxl.utils.dataframe import dataframe_to_rows 
-from openpyxl.styles import Font, Alignment, Border, Side 
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl.styles import Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from datetime import datetime
 import sys
@@ -22,6 +22,7 @@ class Logger:
     def flush(self):
         pass
 
+today = datetime.today().strftime('%Y-%m-%d')
 sys.stdout = Logger(f"Formulas for the file Comparison of IC {today}.txt")
 
 # your entire code
@@ -136,60 +137,97 @@ def raname_columns(col_name):
 
 # Function for calculating stats
 def apply_value(row, column_name, df):
-    if row['Наименование показателя'] == 'НП':
-        value = df.loc[df['Наименование показателя'] == 'Страховые премии по операциям страхования, сострахования и перестрахования – нетто-перестрахование по страхованию иному, чем страхование жизни', column_name].values[0]
-        print(f'НП: {value}')        
-        return value
-    elif row['Наименование показателя'] == 'ЗП':
-        value = df.loc[df['Наименование показателя'] == 'Заработанные страховые премии – нетто-перестрахование, в том числе:', column_name].values[0]
-        print(f'ЗП: {value}') 
-        return value if not pd.isna(value) else 0
-    elif row['Наименование показателя'] == 'КУ':
-        payments = df.loc[df['Наименование показателя'] == 'Выплаты по операциям страхования, сострахования и перестрахования – нетто-перестрахование по страхованию иному, чем страхование жизни', column_name].values[0]
-        reserves_change = df.loc[df['Наименование показателя'] == 'Изменение резервов убытков – нетто-перестрахование по страхованию иному, чем страхование жизни', column_name].values[0]
-        ZP = df.loc[df['Наименование показателя'] == 'Заработанные страховые премии – нетто-перестрахование, в том числе:', column_name].values[0]
-        value = -(payments+reserves_change)/ZP
-        print(f'КУ: -({payments}+{reserves_change})/{ZP}') 
-        return value if not pd.isna(value) else 0
-    elif row['Наименование показателя'] == 'РУУ с регр и субр':
-        expenses = df.loc[df['Наименование показателя'] == 'Расходы по урегулированию убытков – нетто-перестрахование по страхованию иному, чем страхование жизни', column_name].values[0]
-        income_from_recourses = df.loc[df['Наименование показателя'] == 'Доходы от регрессов, суброгаций и прочих возмещений – нетто-перестрахование по страхованию иному, чем страхование жизни', column_name].values[0]
-        change_in_rating = df.loc[df['Наименование показателя'] == 'Изменение оценки будущих поступлений по регрессам, суброгациям и прочим возмещениям – нетто-перестрахование по страхованию иному, чем страхование жизни', column_name].values[0]
-        ZP = df.loc[df['Наименование показателя'] == 'Заработанные страховые премии – нетто-перестрахование, в том числе:', column_name].values[0]
-        value = -(expenses+income_from_recourses+change_in_rating)/ZP
-        print(f'РУУ с регр и субр: -({expenses}+{income_from_recourses}+{change_in_rating})/{ZP}') 
-        return value if not pd.isna(value) else 0
-    elif row['Наименование показателя'] == 'Аквизиция':
-        expenses = df.loc[df['Наименование показателя'] == 'Расходы по ведению страховых операций – нетто-перестрахование, в том числе:', column_name].values[0]
-        ZP = df.loc[df['Наименование показателя'] == 'Заработанные страховые премии – нетто-перестрахование, в том числе:', column_name].values[0]
-        value = -expenses/ZP
-        print(f'Аквизиция: -({expenses})/{ZP}') 
-        return value if not pd.isna(value) else 0
-    elif row['Наименование показателя'] == 'ККУ':
-        payments = df.loc[df['Наименование показателя'] == 'Результат от операций по страхованию иному, чем страхование жизни', column_name].values[0]
-        ZP = df.loc[df['Наименование показателя'] == 'Заработанные страховые премии – нетто-перестрахование, в том числе:', column_name].values[0]
-        value = 1-payments/ZP
-        print(f'ККУ: {1-payments}/{ZP}') 
-        return value if not pd.isna(value) else 0
+    try:
+        # Check if the value exists before accessing it
+        if row['Наименование показателя'] == 'НП':
+            value = df.loc[df['Наименование показателя'] == 
+                           'Страховые премии по операциям страхования, сострахования и перестрахования – нетто-перестрахование по страхованию иному, чем страхование жизни', column_name]
+            value = value.values[0] if not value.empty else 0
+            print(f'НП: {value}')        
+            return value
+        
+        elif row['Наименование показателя'] == 'ЗП':
+            value = df.loc[df['Наименование показателя'] == 
+                           'Заработанные страховые премии – нетто-перестрахование, в том числе:', column_name]
+            value = value.values[0] if not value.empty else 0
+            print(f'ЗП: {value}') 
+            return value if not pd.isna(value) else 0
+        
+        elif row['Наименование показателя'] == 'КУ':
+            payments = df.loc[df['Наименование показателя'] == 
+                              'Выплаты по операциям страхования, сострахования и перестрахования – нетто-перестрахование по страхованию иному, чем страхование жизни', column_name]
+            reserves_change = df.loc[df['Наименование показателя'] == 
+                                     'Изменение резервов убытков – нетто-перестрахование по страхованию иному, чем страхование жизни', column_name]
+            ZP = df.loc[df['Наименование показателя'] == 
+                        'Заработанные страховые премии – нетто-перестрахование, в том числе:', column_name]
+            payments = payments.values[0] if not payments.empty else 0
+            reserves_change = reserves_change.values[0] if not reserves_change.empty else 0
+            ZP = ZP.values[0] if not ZP.empty else 1  # Prevent division by zero
+            value = -(payments + reserves_change) / ZP
+            print(f'КУ: -({payments}+{reserves_change})/{ZP}') 
+            return value if not pd.isna(value) else 0
+        
+        elif row['Наименование показателя'] == 'РУУ с регр и субр':
+            expenses = df.loc[df['Наименование показателя'] == 
+                             'Расходы по урегулированию убытков – нетто-перестрахование по страхованию иному, чем страхование жизни', column_name]
+            income_from_recourses = df.loc[df['Наименование показателя'] == 
+                                           'Доходы от регрессов, суброгаций и прочих возмещений – нетто-перестрахование по страхованию иному, чем страхование жизни', column_name]
+            change_in_rating = df.loc[df['Наименование показателя'] == 
+                                      'Изменение оценки будущих поступлений по регрессам, суброгациям и прочим возмещениям – нетто-перестрахование по страхованию иному, чем страхование жизни', column_name]
+            ZP = df.loc[df['Наименование показателя'] == 
+                        'Заработанные страховые премии – нетто-перестрахование, в том числе:', column_name]
+            expenses = expenses.values[0] if not expenses.empty else 0
+            income_from_recourses = income_from_recourses.values[0] if not income_from_recourses.empty else 0
+            change_in_rating = change_in_rating.values[0] if not change_in_rating.empty else 0
+            ZP = ZP.values[0] if not ZP.empty else 1  # Prevent division by zero
+            value = -(expenses + income_from_recourses + change_in_rating) / ZP
+            print(f'РУУ с регр и субр: -({expenses}+{income_from_recourses}+{change_in_rating})/{ZP}') 
+            return value if not pd.isna(value) else 0
+        
+        elif row['Наименование показателя'] == 'Аквизиция':
+            expenses = df.loc[df['Наименование показателя'] == 
+                             'Расходы по ведению страховых операций – нетто-перестрахование, в том числе:', column_name]
+            ZP = df.loc[df['Наименование показателя'] == 
+                        'Заработанные страховые премии – нетто-перестрахование, в том числе:', column_name]
+            expenses = expenses.values[0] if not expenses.empty else 0
+            ZP = ZP.values[0] if not ZP.empty else 1  # Prevent division by zero
+            value = -expenses / ZP
+            print(f'Аквизиция: -({expenses})/{ZP}') 
+            return value if not pd.isna(value) else 0
+        
+        elif row['Наименование показателя'] == 'ККУ':
+            payments = df.loc[df['Наименование показателя'] == 
+                             'Результат от операций по страхованию иному, чем страхование жизни', column_name]
+            ZP = df.loc[df['Наименование показателя'] == 
+                        'Заработанные страховые премии – нетто-перестрахование, в том числе:', column_name]
+            payments = payments.values[0] if not payments.empty else 0
+            ZP = ZP.values[0] if not ZP.empty else 1  # Prevent division by zero
+            value = 1 - payments / ZP
+            print(f'ККУ: {1 - payments}/{ZP}') 
+            return value if not pd.isna(value) else 0
+        
+    except Exception as e:
+        print(f"Error in apply_value for {row['Наименование показателя']}: {e}")
+        return 0
 
 for folder in files_and_folders:
-    folder_path = os.path.join(path, folder) # Opening the folder
+    folder_path = os.path.join(path, folder)  # Opening the folder
     if os.path.isdir(folder_path):
         files = os.listdir(folder_path)
         for file in files:
-            if "0420158" in file: # Opening the file with these numbers
-                if file.endswith(".xls") or file.endswith(".xlsx"): # Depending on the extension
+            if "0420158" in file:  # Opening the file with these numbers
+                if file.endswith(".xls") or file.endswith(".xlsx"):  # Depending on the extension
                     file_path = os.path.join(folder_path, file)
                     if file.endswith(".xls"):
                         sheet_names = pd.ExcelFile(file_path, engine='xlrd').sheet_names
-                        sheet_name = direct_sheet_name(sheet_names) # Page selected
+                        sheet_name = direct_sheet_name(sheet_names)  # Page selected
                         if folder == "Согласие":
                             df = pd.read_excel(file_path, sheet_name=sheet_name, header=[1, 2], engine='xlrd') 
                         else:
                             df = pd.read_excel(file_path, sheet_name=sheet_name, header=[2, 3, 4, 5], engine='xlrd') 
                     elif file.endswith(".xlsx"):
                         sheet_names = pd.ExcelFile(file_path).sheet_names
-                        sheet_name = direct_sheet_name(sheet_names) # Выбрали страницу 
+                        sheet_name = direct_sheet_name(sheet_names)  # Выбрали страницу 
                         if folder in ["Тинькофф", "Т-страхование (бывш. Тинькоф)", "Т-страхование", "СОГАЗ", "Ренессанс", "Согаз"]:
                             df = pd.read_excel(file_path, sheet_name=sheet_name, header=[1, 2, 3])
                         else:
@@ -208,7 +246,7 @@ for folder in files_and_folders:
                     # Selecting only the necessary columns
                     df_filtered = find_matching_sheet(df, patterns_list)
                     # Deleting empty columns
-                    df_filtered = df_filtered.T.drop_duplicates().T
+                    df_filtered = df_filtered.loc[:, ~df_filtered.columns.duplicated()]
                     
                     # Renaming the first column
                     if 'Перечень учетных групп' in df_filtered.columns:
@@ -230,15 +268,15 @@ for folder in files_and_folders:
                     # Unify the first column
                     df_filtered['Наименование показателя'] = df_filtered['Наименование показателя'].replace(dict_str)
                     df_filtered['Наименование показателя'] = df_filtered['Наименование показателя'].str.strip()
-                    df_filtered['Наименование показателя'] = df_filtered['Наименование показателя'].replace(r'\s+', ' ', regex = True)
+                    df_filtered['Наименование показателя'] = df_filtered['Наименование показателя'].replace(r'\s+', ' ', regex=True)
                     df_filtered['Наименование показателя'] = df_filtered['Наименование показателя'].str.capitalize()
                     df_filtered['Наименование показателя'] = df_filtered['Наименование показателя'].replace(dict_str_2)
-                    df_filtered = df_filtered.loc[:, (df_filtered!= 0).any(axis=0)]
+                    df_filtered = df_filtered.loc[:, (df_filtered != 0).any(axis=0)]
 
                     # Renaming columns
                     df_filtered.columns = [raname_columns(col) for col in df_filtered.columns]
                     # Arrange in ascending order
-                    sorted_columns = sorted(df_filtered.columns, key = lambda x: (re.findall(r'\d+', x), x))
+                    sorted_columns = sorted(df_filtered.columns, key=lambda x: (re.findall(r'\d+', x), x))
                     df_filtered = df_filtered[sorted_columns]
 
                     # Replace empty values with 0 for further calculations
@@ -247,13 +285,11 @@ for folder in files_and_folders:
                     # Assign a name to the table
                     if folder == "Сбербанк Страхование":
                         globals()[f"df_Сбербанк_Страхование"] = df_filtered
-                        # print(f"Таблица: df_Сбербанк_Страхование, статы: Сбербанк_Страхование")
                         dfs[folder] = df_filtered
                     elif folder == "Согласие-Вита":
                         df_filtered = df_filtered.drop(df_filtered.index[0])
                         df_filtered = df_filtered.reset_index(drop=True)
                         globals()[f"df_Согласие_Вита"] = df_filtered
-                        # print(f"Таблица: df_Согласие_Вита, статы: Согласие_Вита")
                         dfs[folder] = df_filtered
                     elif folder == "Согласие":
                         df_filtered = df_filtered.drop(df_filtered.index[0])
@@ -265,7 +301,6 @@ for folder in files_and_folders:
                         dfs[folder] = df_filtered
                     else:
                         globals()[f"df_{folder}"] = df_filtered
-                        # print(f"Таблица: df_{folder}, статы: {folder}")
                         dfs[folder] = df_filtered
                     i += 1
 
@@ -274,11 +309,9 @@ stat = {}
 i = 0
 # Calculate stats
 for name, df in dfs.items():
-    print(f"\n\n{name}")
     new_rows = pd.DataFrame({'Наименование показателя': ['НП', 'ЗП', 'КУ', 'РУУ с регр и субр', 'Аквизиция', 'ККУ']})
     for col in df.columns[1:]:
-        print(f"\n{col}\n")
-        new_rows[col] = new_rows.apply(lambda row: apply_value(row, col, df), axis = 1)
+        new_rows[col] = new_rows.apply(lambda row: apply_value(row, col, df), axis=1)
     globals()[name] = new_rows
     stat[name] = new_rows
     i += 1
@@ -300,10 +333,8 @@ for category in categories:
         i += 1
     result = pd.concat([new_rows, globals()[category]], axis=1)
     page[f"{category}"] = result
-    print(f"{category}")
 
 # Create a new Excel file
-today = datetime.today().strftime('%d.%m.%Y')
 file_name = f'Comparison SK {today}.xlsx'
 wb = Workbook()
 
@@ -376,7 +407,7 @@ for category, df in page.items():
     # Apply number format
     for row in ws.iter_rows(min_row=3, max_row=ws.max_row, min_col=1, max_col=ws.max_column):
         first_col = row[0].value
-        if first_col in ['NP', 'SP']:  # Apply to specific columns
+        if first_col in ['НП', 'ЗП']:  # Apply to specific columns
             for cell in row[1:]:
                 cell.number_format = '#,##0'  # Numeric format
                 cell.font = Font(bold=False)
