@@ -1,74 +1,57 @@
 # Insurance_stats_analyzer
-## Description
-This script is a tool for analyzing key operational indicators (KO) of insurance companies. It processes complex Excel files provided by various insurers, cleans and structures the data, and then analyzes the key operational indicators over different periods. This allows for the comparison of the performance of various companies in the insurance market. The output of the script is a well-structured, easily interpretable report that highlights the most important analytical data for assessing the market’s state.
+## Description  
+This script is a tool for analyzing the key operational indicators (KO) of insurance companies. It processes complex Excel files provided by various insurers, cleans and structures the data, and then analyzes key operational indicators over different periods. This allows for a comparative assessment of various companies in the insurance market. The script produces a structured and easy-to-read report that highlights the most important analytical insights for market evaluation.
 
-## Functional Description
-The script performs the following key functions:
-1. **File Discovery and Selection**: 
-   - It scans specified directories for Excel files related to insurance companies and identifies the relevant ones based on their naming conventions or file structure.
-2. **Data Cleaning**: 
-   - Standardizes column names and formats.
-   - Removes unnecessary rows and columns, ensuring only relevant data is retained.
-   - Handles missing or empty values by filling them with zeros or other predefined values for further analysis.
-3. **Data Transformation**: 
-   - Converts values into appropriate formats (e.g., numerical values from text representations).
-   - Applies transformations specific to certain companies or business lines (e.g., multiplying specific columns by 1000 for certain insurers).
-4. **KPI Extraction**: 
-   - Extracts key performance indicators (KPIs) like Net Profit (NP), Gross Profit (ZP), Acquisition Costs, and other relevant metrics from each company’s data.
-   - Organizes these KPIs into a structured format to enable comparisons across companies and time periods.
-5. **Report Generation**: 
-   - Generates a structured Excel report that compares the extracted KPIs across different companies and periods.
-   - The report includes conditional formatting, adjusted column widths, merged cells, and clear headings for ease of use and better readability.
-   - The output is a comprehensive, visually appealing, and easy-to-understand summary of the analyzed data.
+## Functional Description  
+The script performs the following key tasks:  
+1. **Data Collection**: Processes multiple Excel files from various insurance companies, each containing detailed operational data.  
+2. **Data Cleaning**: Removes irrelevant or erroneous entries, ensuring the accuracy and integrity of the information.  
+3. **Data Structuring**: Standardizes and organizes data into a structured format for easier analysis.  
+4. **Key Operational Indicator Analysis**: Examines operational indicators (KO) of insurance companies over different periods, focusing on metrics required for regulatory reporting.  
+5. **Data Comparison**: Compares operational indicators across multiple insurance companies to evaluate their performance.  
+6. **Report Generation**: Produces a structured and readable report that highlights critical insights, facilitating a clear understanding of market performance.  
 
-## How It Works
-1. **File Processing**: 
-   - The script identifies the necessary Excel files from specified directories and loads them into memory.
-   - It reads the data from the selected files, handling both `.xls` and `.xlsx` formats.
-2. **Data Extraction and Cleaning**: 
-   - The script scans the Excel sheets for relevant data, filtering out any irrelevant information (such as metadata or empty columns).
-   - It standardizes the column names to ensure consistency across multiple files and companies.
-   - Missing data is handled by either removing or filling in gaps with default values like zeroes.
-3. **KPI Calculation**: 
-   - Key performance indicators (KPIs) are extracted based on predefined column patterns and business rules.
-   - These KPIs are normalized across companies to enable valid comparisons, regardless of different data structures.
-4. **Report Generation**: 
-   - The script uses the `openpyxl` library to generate a new Excel report that is both readable and well-structured.
-   - It applies formatting like column width adjustment, bold text for headers, and colored cells to highlight important metrics.
-   - The generated report allows stakeholders to quickly assess the performance of multiple companies and periods at a glance.
+## How It Works  
+1. The script scans a specified directory containing Excel reports from different insurance companies.  
+2. It identifies and extracts the relevant sheets based on predefined naming patterns.  
+3. The extracted data undergoes a cleaning process to remove inconsistencies and errors.  
+4. The script selects and standardizes the necessary columns related to key operational indicators.  
+5. It aggregates the data across different periods and companies for comparative analysis.  
+6. A final report is generated in an Excel file, summarizing the key operational indicators for each company in a structured manner.  
 
-## Input Structure
-To run the script, the following parameters need to be provided:
-1. **Directory Path**: Path to the directory containing the Excel files of the insurance companies.
-2. **File Naming Patterns**: Patterns that help identify relevant files for analysis.
-3. **Sheet Name Patterns**: Specific patterns that help select the relevant sheet(s) within each file.
-4. **Company-Specific Adjustments**: Define transformations or adjustments needed for certain companies' data (e.g., multiplying columns by specific values).
+## Input Structure  
+To run the script, the following input parameters need to be provided:  
+1. **Directory Path**: The path to the folder containing insurance company reports.  
+2. **Sheet Identification Rules**: Patterns used to recognize relevant report sheets.  
+3. **Column Selection Rules**: Keywords to identify columns with key operational indicators.  
+The script is designed to work with official reporting formats issued by the Central Bank, ensuring compliance with regulatory requirements.  
 
-The script is designed to handle subfolders containing multiple Excel files, and each file may contain multiple sheets with different data structures.
+## Technical Requirements  
+To run the script, the following dependencies are required:  
+1. **Python 3.x**  
+2. **Required libraries**:  
+   - `pandas` – for data processing  
+   - `numpy` – for numerical operations  
+   - `openpyxl` – for working with Excel files  
+   - `xlrd` – for reading older Excel formats  
+   - `re` – for pattern recognition in sheet names and columns  
+   - `os` – for file and directory operations  
+   - `datetime` – for handling date-related operations  
 
-## Technical Requirements
-To run the script, the following are required:
-1. Python 3.x
-2. Required libraries:
-   - `pandas` for data manipulation.
-   - `xlrd` for reading `.xls` files.
-   - `openpyxl` for working with `.xlsx` files and generating reports.
-   - `numpy` for numerical operations.
-3. Directory with Excel files containing insurance data for analysis.
+## Usage  
+1. Place all Excel reports in the specified folder.  
+2. Modify the `path` variable in the script to point to the correct directory.  
+3. Run the script. It will:  
+   - Extract data from the relevant sheets.  
+   - Standardize and clean the data.  
+   - Analyze key operational indicators.  
+   - Generate a consolidated report in Excel format.  
 
-## Usage
-1. Set the path to the directory containing the insurance data files.
-2. Define any necessary file naming patterns and sheet name filters.
-3. Run the script. The script will:
-   - Scan the directory for relevant files.
-   - Clean, organize, and process the data.
-   - Generate a comprehensive Excel report comparing KPIs across different companies and periods.
+## Example Output  
+- **Structured Excel Report**:  
+  - Contains key operational indicators for each insurance company.  
+  - Displays comparative performance analysis.  
+  - Summarizes insights for market evaluation.  
 
-## Example Output
-The output will be an Excel file with:
-- A well-organized table that compares KPIs across insurance companies.
-- Conditional formatting to highlight key performance changes.
-- Adjusted columns and merged cells for better readability.
-
-## Conclusion
-This tool significantly simplifies the process of analyzing insurance data by automating data extraction, cleaning, transformation, and report generation. It helps insurance companies and analysts make better data-driven decisions by providing them with clear, comparative insights into key business metrics across time periods and companies.
+## Conclusion  
+This tool automates the collection, cleaning, and analysis of key operational indicators from multiple insurance companies. It enables comparative evaluation and market performance assessment based on official regulatory reporting. The structured output simplifies further analysis and decision-making in the insurance sector.  
